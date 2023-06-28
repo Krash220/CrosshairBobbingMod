@@ -1,0 +1,36 @@
+// Apply to forge* project
+
+buildscript {
+    repositories {
+        maven {
+            name = 'Sponge'
+            url = 'https://repo.spongepowered.org/maven'
+        }
+    }
+    dependencies {
+        classpath 'org.spongepowered:mixingradle:0.7.+'
+    }
+}
+
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'org.spongepowered.mixin'
+
+minecraft {
+    mappings channel: project.mapping_channel, version: project.mapping_version
+}
+
+dependencies {
+    minecraft "net.minecraftforge:forge:${project.forge_version}"
+
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+}
+
+mixin {
+    add sourceSets.main, "mixin.${mod.id}.refmap.json"
+}
+
+jar.finalizedBy('reobfJar')
+
+processResources {
+    rename 'mixin.json', "mixin.${mod.id}.json"
+}

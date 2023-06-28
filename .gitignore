@@ -1,0 +1,15 @@
+# Gradle
+/gradle/wrapper/gradle-wrapper.jar
+**/.gradle
+**/build
+**/run
+/dists
+/gradlew
+/gradlew.bat
+
+# Eclipse
+**/.classpath
+**/.project
+**/.settings
+**/bin
+!**/src/**/bin

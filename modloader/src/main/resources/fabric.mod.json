@@ -1,0 +1,23 @@
+{
+    "schemaVersion": 1,
+    "id": "${MOD_ID}_modloader",
+    "name": "${MOD_NAME} Modloader",
+    "version": "1.0",
+    "description": "Powered by Forge & Fabric Mixin One",
+    "mixins": [
+        "mixin.${MOD_ID}.modloader.json"
+    ],
+    "jars": [
+        {
+            "file": "mod.jar"
+        },
+        {
+            "file": "META-INF/core/fabric-mixin.jar"
+        }
+    ],
+    "depends": {
+        "fabricloader": ">=0.14.14",
+        "minecraft": "*",
+        "java": ">=8"
+    }
+}

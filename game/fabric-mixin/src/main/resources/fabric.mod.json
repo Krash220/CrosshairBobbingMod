@@ -1,0 +1,21 @@
+{
+    "schemaVersion": 1,
+    "id": "${MOD_ID}_mixin",
+    "name": "${MOD_NAME} Mixins",
+    "version": "${MOD_VERSION}",
+    "authors": [
+        "${MOD_AUTHOR}"
+    ],
+    "contact": {
+        "sources": "${MOD_URL}"
+    },
+    "license": "${MOD_LICENSE}",
+    "mixins": [
+        "mixin.${MOD_ID}.json"
+    ],
+    "depends": {
+        "fabricloader": ">=0.14.14",
+        "minecraft": "*",
+        "java": ">=8"
+    }
+}

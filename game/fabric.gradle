@@ -1,0 +1,10 @@
+// Apply to fabric* project (exclude fabric-mixin)
+
+apply plugin: 'fabric-loom'
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.mc_version}"
+    mappings "net.fabricmc:yarn:${project.mc_version}+build.${project.yarn_build}:v2"
+    modImplementation "net.fabricmc:fabric-loader:0.14.14"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric}"
+}

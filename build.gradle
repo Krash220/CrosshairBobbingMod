@@ -1,0 +1,47 @@
+buildscript {
+    dependencies {
+        classpath 'org.spongepowered:mixingradle:0.7.+'
+    }
+}
+
+plugins {
+    id 'fabric-loom' version '1.1-SNAPSHOT' apply false
+    id 'net.minecraftforge.gradle' version '5.1.+' apply false
+}
+
+allprojects {
+    apply plugin: 'java-library'
+    apply plugin: 'eclipse'
+
+    java.toolchain.languageVersion = JavaLanguageVersion.of(8)
+
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = 'UTF-8'
+    }
+}
+
+apply plugin: 'ffm1.project'
+
+sourceSets {
+    modbase
+}
+
+dependencies {
+    modbaseImplementation 'net.minecraftforge:forge:1.16.5-36.2.34:universal@jar'
+    modbaseImplementation 'net.minecraftforge:eventbus:4.0.0'
+
+    modbaseImplementation 'net.fabricmc:fabric-loader:0.14.14'
+}
+
+jar {
+    manifest {
+        attributes([
+            'Implementation-Title'    : "${mod.name}",
+            'Implementation-Vendor'   : "${mod.author}",
+            'Implementation-Version'  : "${mod.version}"
+        ])
+    }
+
+    from sourceSets.modbase.output
+    dependsOn ':modbaseClasses'
+}

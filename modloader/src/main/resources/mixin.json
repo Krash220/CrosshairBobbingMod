@@ -1,0 +1,4 @@
+{
+    "required": true,
+    "plugin": "${MOD_PACKAGE}.loader.fabric.MixinPlugin"
+}

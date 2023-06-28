@@ -1,0 +1,24 @@
+{
+    "schemaVersion": 1,
+    "id": "${MOD_ID}",
+    "name": "${MOD_NAME}",
+    "version": "${MOD_VERSION}",
+    "description": "${MOD_DESCRIPTION}",
+    "authors": [
+        "${MOD_AUTHOR}"
+    ],
+    "contact": {
+        "sources": "${MOD_URL}"
+    },
+    "license": "${MOD_LICENSE}",
+    "entrypoints": {
+        "main": [
+            "${MOD_PACKAGE}.platform.FabricLoader"
+        ]
+    },
+    "depends": {
+        "fabricloader": ">=0.14.14",
+        "minecraft": "*",
+        "java": ">=8"
+    }
+}

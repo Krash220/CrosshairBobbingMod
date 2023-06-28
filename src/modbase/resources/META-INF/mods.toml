@@ -1,0 +1,10 @@
+modLoader="javafml"
+loaderVersion="[0,)"
+license="${MOD_LICENSE}"
+[[mods]]
+modId="${MOD_ID}"
+version="${MOD_VERSION}"
+displayName="${MOD_NAME}"
+authors="${MOD_AUTHOR}"
+displayURL="${MOD_URL}"
+description="${MOD_DESCRIPTION}"

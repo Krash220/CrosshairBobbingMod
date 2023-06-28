@@ -1,0 +1,63 @@
+pluginManagement {
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+        maven {
+            name = 'Fabric'
+            url = 'https://maven.fabricmc.net/'
+        }
+        maven {
+            name = 'Forge'
+            url = 'https://maven.minecraftforge.net/'
+        }
+        maven {
+            name = 'Sponge'
+            url = 'https://repo.spongepowered.org/maven'
+        }
+    }
+}
+
+dependencyResolutionManagement {
+    repositories {
+        mavenCentral()
+        maven {
+            name = 'Minecraft'
+            url = 'https://libraries.minecraft.net/'
+            metadataSources {
+                artifact()
+            }
+        }
+        maven {
+            name = 'Fabric'
+            url = 'https://maven.fabricmc.net/'
+            metadataSources {
+                artifact()
+            }
+        }
+        maven {
+            name = 'Forge'
+            url = 'https://maven.minecraftforge.net/'
+            metadataSources {
+                artifact()
+            }
+        }
+    }
+}
+
+include 'game:api', 'modloader'
+
+def game = new File(settingsDir, 'game')
+
+for (f in game.listFiles()) {
+    if (f.isDirectory() && (f.name.startsWith('forge') || f.name.startsWith('fabric'))) {
+        include "game:${f.name}"
+    }
+}
+
+def fabricMixin = new File(game, 'fabric-mixin')
+
+for (f in fabricMixin.listFiles()) {
+    if (f.isDirectory() && f.name.startsWith('version')) {
+        include "game:fabric-mixin:${f.name}"
+    }
+}
