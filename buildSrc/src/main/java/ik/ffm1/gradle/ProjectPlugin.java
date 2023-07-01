@@ -15,14 +15,13 @@ import org.gradle.api.Project;
 import org.gradle.api.file.DuplicatesStrategy;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.plugins.JavaPluginExtension;
-import org.gradle.api.specs.Spec;
 import org.gradle.api.specs.Specs;
 import org.gradle.api.tasks.Copy;
 import org.gradle.api.tasks.SourceSet;
+import org.gradle.api.tasks.SourceTask;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.jvm.tasks.Jar;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import ik.ffm1.gradle.extensions.ModExtension;
@@ -123,15 +122,13 @@ public class ProjectPlugin implements Plugin<Project> {
                         task.expand(expand, detail -> {
                             detail.getEscapeBackslash().set(true);
                         });
-                        task.doLast(t -> {
-                            sourceSet.getJava().setSrcDirs(ImmutableList.of(output));
-                        });
 
                         task.getOutputs().upToDateWhen(Specs.SATISFIES_NONE);
                     });
 
                     project.getTasks().named(sourceSet.getCompileJavaTaskName(), task -> {
                         task.dependsOn(provider);
+                        ((SourceTask) task).setSource(new File(project.getBuildDir(), "sources/" + sourceSet.getName()));
                     });
                     project.getTasks().named(sourceSet.getProcessResourcesTaskName(), task -> {
                         Copy copy = (Copy) task;
@@ -160,14 +157,6 @@ public class ProjectPlugin implements Plugin<Project> {
         });
 
         Project mixin = root.project(":game:fabric-mixin", project -> {
-            Object ext = project.getExtensions().getByName("java");
-
-            if (ext instanceof JavaPluginExtension) {
-                JavaPluginExtension java = (JavaPluginExtension) ext;
-
-                java.getSourceSets().create("mixin");
-            }
-
             MergeMixin merge = project.getTasks().create("mergeMixin", MergeMixin.class);
 
             build.mustRunAfter(merge);
@@ -181,38 +170,18 @@ public class ProjectPlugin implements Plugin<Project> {
             });
         });
 
-        mixin.subprojects(project -> {
-            Object ext = project.getExtensions().getByName("java");
-            Object parentExt = mixin.getExtensions().getByName("java");
-
-            if (parentExt instanceof JavaPluginExtension && ext instanceof JavaPluginExtension) {
-                JavaPluginExtension java = (JavaPluginExtension) ext;
-                JavaPluginExtension parentJava = (JavaPluginExtension) parentExt;
-
-                java.getSourceSets().getByName("main").getJava().setSrcDirs(parentJava.getSourceSets().getByName("mixin").getJava().getSrcDirs());
-            }
-
-            mixin.getTasks().named("assemble", task -> {
-                task.dependsOn(project.getTasks().named("assemble"));
-            });
-
-            project.getTasks().named("jar", task -> {
-                ((MergeMixin) mixin.getTasks().getByName("mergeMixin")).mixin(project.getName().substring(7), ((Jar) task).getArchiveFile().get().getAsFile());
-            });
-
-            project.apply(ImmutableMap.of("from", mixin.file("mixin.gradle")));
-        });
-
         Project game = root.project(":game");
 
         game.subprojects(project -> {
-            String type = null;
+            String t = null;
 
             if (project.getName().startsWith("forge")) {
-                type = "forge";
+                t = "forge";
             } else if (project.getName().startsWith("fabric")) {
-                type = "fabric";
+                t = "fabric";
             }
+
+            final String type = t;
 
             if (type != null) {
                 build.dependsOn(project.getTasks().named("assemble"));
@@ -230,11 +199,21 @@ public class ProjectPlugin implements Plugin<Project> {
                         File output = ((Jar) jar).getArchiveFile().get().getAsFile();
 
                         validate.impl(output);
+
+                        if (type.equals("fabric")) {
+                            ((MergeMixin) mixin.getTasks().getByName("mergeMixin")).mixin(project.getName().substring(6), ((Jar) jar).getArchiveFile().get().getAsFile());
+                        }
                     });
 
                     project.getTasks().named("assemble", assemble -> {
                         assemble.finalizedBy(validate);
                     });
+
+                    if (type.equals("fabric")) {
+                        mixin.getTasks().named("assemble", task -> {
+                            task.dependsOn(project.getTasks().named("assemble"));
+                        });
+                    }
                 }
 
                 build.core(project);
@@ -251,6 +230,9 @@ public class ProjectPlugin implements Plugin<Project> {
         if (ext instanceof JavaPluginExtension) {
             JavaPluginExtension java = (JavaPluginExtension) ext;
             SourceSet main = java.getSourceSets().getByName("main");
+            Project api = root.project(":game:api");
+            JavaPluginExtension apiJava = (JavaPluginExtension) api.getExtensions().getByName("java");
+            SourceSet apiMain = apiJava.getSourceSets().getByName("main");
 
             build.dependsOn(root.getTasks().register("devMainJar", Jar.class, task -> {
                 task.doFirst(t -> {
@@ -258,8 +240,10 @@ public class ProjectPlugin implements Plugin<Project> {
                 });
 
                 task.dependsOn(":classes");
+                task.dependsOn(":game:api:classes");
 
                 task.from(main.getOutput());
+                task.from(apiMain.getOutput());
                 task.getDestinationDirectory().set(root.file("dists"));
 
                 task.getArchiveClassifier().set("dev");
@@ -270,8 +254,10 @@ public class ProjectPlugin implements Plugin<Project> {
                 });
 
                 task.dependsOn(":processSources");
+                task.dependsOn(":game:api:processSources");
 
-                task.from(main.getAllJava());
+                task.from(new File(root.getBuildDir(), "sources/" + main.getName()));
+                task.from(new File(api.getBuildDir(), "sources/" + apiMain.getName()));
                 task.getDestinationDirectory().set(root.file("dists"));
 
                 task.getArchiveClassifier().set("sources");

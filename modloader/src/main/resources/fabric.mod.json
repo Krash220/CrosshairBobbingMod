@@ -9,10 +9,10 @@
     ],
     "jars": [
         {
-            "file": "mod.jar"
+        	"file": "META-INF/core/fabric-mixin.jar"
         },
         {
-            "file": "META-INF/core/fabric-mixin.jar"
+            "file": "mod.jar"
         }
     ],
     "depends": {

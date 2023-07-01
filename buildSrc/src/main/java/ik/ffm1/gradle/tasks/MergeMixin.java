@@ -1,5 +1,6 @@
 package ik.ffm1.gradle.tasks;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -8,7 +9,6 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +30,7 @@ import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.InvokeDynamicInsnNode;
 import org.objectweb.asm.tree.LdcInsnNode;
+import org.objectweb.asm.tree.LocalVariableNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TypeInsnNode;
@@ -72,9 +73,11 @@ public class MergeMixin extends DefaultTask {
         String pkgPath = pkg.replace('.', '/');
 
         Map<String, List<String>> plugins = new LinkedHashMap<>();
-        Map<String, Long> crcMap = new HashMap<>();
 
         for (Entry<String, File> entry : this.mixinFiles.entrySet()) {
+            String verPkg = pkg + "v" + entry.getKey().replace('.', '_') + ".";
+            String verPkgPath = verPkg.replace('.', '/');
+
             List<String> pluginList = new ArrayList<>();
 
             JarFile jar = new JarFile(entry.getValue());
@@ -86,38 +89,16 @@ public class MergeMixin extends DefaultTask {
                 if (!file.isDirectory()) {
                     String fn = file.getName();
 
-                    if (fn.equals("version" + entry.getKey() + "-refmap.json")) {
+                    if (fn.equals("fabric" + entry.getKey() + "-refmap.json")) {
                         JarEntry json = new JarEntry("mixin." + mod.get("id") + ".refmap." + entry.getKey() + ".json");
 
-                        this.writeFile(mixinOutput, json, jar.getInputStream(file));
+                        this.writeFile(mixinOutput, json, modifyJson(jar.getInputStream(file), pkg, verPkg));
                     } else if (fn.startsWith(pkgPath) && fn.endsWith(".class")) {
-                        String clazz = fn.substring(0, fn.length() - 6).replace('/', '.');
-                        Long crc = crcMap.get(clazz);
+                        String clazz = replaceHead(fn, pkgPath, verPkgPath);
+                        JarEntry clazzEntry = new JarEntry(clazz);
 
-                        if (crc == null) {
-                            crcMap.put(clazz, file.getCrc());
-
-                            this.writeFile(mixinOutput, file, jar.getInputStream(file));
-                        } else {
-                            while (crc != null && crc != file.getCrc()) {
-                                clazz += '_';
-
-                                crc = crcMap.get(clazz);
-                            }
-
-                            if (crc == null) {
-                                crcMap.put(clazz, file.getCrc());
-                                fn = clazz.replace('.', '/') + ".class";
-
-                                byte[] bytecode = this.modifyClass(jar.getInputStream(file), clazz);
-
-                                mixinOutput.putNextEntry(new JarEntry(fn));
-                                mixinOutput.write(bytecode);
-                                mixinOutput.closeEntry();
-                            }
-                        }
-
-                        pluginList.add(clazz.substring(pkg.length()));
+                        this.writeFile(mixinOutput, clazzEntry, modifyClass(jar.getInputStream(file), pkg, verPkg));
+                        pluginList.add(clazz.substring(0, clazz.length() - 6).substring(pkg.length()).replace('/', '.'));
                     }
                 }
             }
@@ -143,58 +124,66 @@ public class MergeMixin extends DefaultTask {
         this.getInputs().file(file);
     }
 
-    private byte[] modifyClass(InputStream bytecode, String targetClass) throws IOException {
+    private static byte[] modifyJson(InputStream json, String from, String to) throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+        byte[] buffer = new byte[4096];
+        int readed;
+
+        while ((readed = json.read(buffer)) > 0) {
+            bos.write(buffer, 0, readed);
+        }
+
+        String str = new String(bos.toByteArray(), "UTF-8").replace(from.replace('.', '/'), to.replace('.', '/'));
+
+        bos.close();
+
+        return str.getBytes("UTF-8");
+    }
+
+    public static byte[] modifyClass(InputStream bytecode, String from, String to) throws IOException {
         ClassReader cr = new ClassReader(bytecode);
         ClassNode node = new ClassNode();
 
         cr.accept(node, ClassReader.SKIP_FRAMES);
 
-        String clazz = node.name;
-        String target = targetClass.replace('.', '/');
+        from = from.replace('.', '/');
+        to = to.replace('.', '/');
 
-        String clazzType = "L" + clazz + ";";
-        String targetType = "L" + target + ";";
+        String fromPkg = "L" + from;
+        String toPkg = "L" + to;
 
-        node.name = target;
+        node.name = replaceHead(node.name, from, to);
 
         for (FieldNode field : node.fields) {
-            if (field.desc.equals(clazzType)) {
-                field.desc = targetType;
-            }
+            field.desc = replaceHead(field.desc, fromPkg, toPkg);
         }
 
         for (MethodNode method : node.methods) {
-            method.desc = method.desc.replace(clazzType, targetType);
+            method.desc = replaceHead(method.desc, fromPkg, toPkg);
 
             for (AbstractInsnNode insn = method.instructions.getFirst(); insn != null; insn = insn.getNext()) {
                 if (insn instanceof FieldInsnNode) {
                     FieldInsnNode f = (FieldInsnNode) insn;
 
-                    if (f.owner.equals(clazz)) {
-                        f.owner = target;
-                    }
+                    f.owner = replaceHead(f.owner, from, to);
                 } else if (insn instanceof MethodInsnNode) {
                     MethodInsnNode m = (MethodInsnNode) insn;
 
-                    if (m.owner.equals(clazz)) {
-                        m.owner = target;
-                    }
-
-                    m.desc = m.desc.replace(clazzType, targetType);
+                    m.owner = replaceHead(m.owner, from, to);
+                    m.desc = replaceHead(m.desc, fromPkg, toPkg);
                 } else if (insn instanceof TypeInsnNode) {
                     TypeInsnNode t = (TypeInsnNode) insn;
 
-                    if (t.desc.equals(clazz)) {
-                        t.desc = target;
-                    }
+                    t.desc = replaceHead(t.desc, from, to);
                 } else if (insn instanceof LdcInsnNode) {
                     LdcInsnNode l = (LdcInsnNode) insn;
 
                     if (l.cst instanceof Type) {
                         Type t = (Type) l.cst;
 
-                        if (t.getInternalName().equals(clazz)) {
-                            l.cst = Type.getType(targetType);
+                        if (t.getInternalName().startsWith(from)) {
+                            l.cst = Type.getType(replaceHead(t.getInternalName(), fromPkg, toPkg));
                         }
                     }
                 } else if (insn instanceof InvokeDynamicInsnNode) {
@@ -206,11 +195,18 @@ public class MergeMixin extends DefaultTask {
                         if (arg instanceof Handle) {
                             Handle handle = (Handle) arg;
 
-                            if (handle.getOwner().equals(clazz)) {
-                                invoke.bsmArgs[i] = new Handle(handle.getTag(), target, handle.getName(), handle.getDesc(), handle.isInterface());
+                            if (handle.getOwner().startsWith(from)) {
+                                invoke.bsmArgs[i] = new Handle(handle.getTag(), replaceHead(handle.getOwner(), from, to), handle.getName(), handle.getDesc(), handle.isInterface());
                             }
                         }
                     }
+                }
+            }
+
+            if (method.localVariables != null) {
+                for (LocalVariableNode v : method.localVariables) {
+                    v.desc = replaceHead(v.desc, fromPkg, toPkg);
+                    v.signature = replaceHead(v.signature, fromPkg, toPkg);
                 }
             }
         }
@@ -219,6 +215,14 @@ public class MergeMixin extends DefaultTask {
         node.accept(cw);
 
         return cw.toByteArray();
+    }
+
+    private static String replaceHead(String str, String from, String to) {
+        if (str != null && str.startsWith(from)) {
+            return to + str.substring(from.length());
+        } else {
+            return str;
+        }
     }
 
     private void writeFile(JarOutputStream out, JarEntry entry, InputStream stream) throws IOException {
@@ -232,6 +236,12 @@ public class MergeMixin extends DefaultTask {
         }
 
         stream.close();
+        out.closeEntry();
+    }
+
+    private void writeFile(JarOutputStream out, JarEntry entry, byte[] buf) throws IOException {
+        out.putNextEntry(entry);
+        out.write(buf);
         out.closeEntry();
     }
 }

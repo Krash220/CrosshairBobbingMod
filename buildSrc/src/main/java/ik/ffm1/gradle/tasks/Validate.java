@@ -100,6 +100,10 @@ public class Validate extends DefaultTask {
 
         methods.forEach(m -> {
             if ((m.access & Opcodes.ACC_PUBLIC) != 0) {
+                if ((node.access & Opcodes.ACC_ABSTRACT) != 0 && this.asm2name(m).equals("public void <init>()")) {
+                    return;
+                }
+
                 list.add("Method '" + this.asm2name(m) + "'");
             }
         });
@@ -134,7 +138,7 @@ public class Validate extends DefaultTask {
             builder.append("static ");
         }
 
-        builder.append(this.getTypes(node.desc)).append(' ').append(node.name);
+        builder.append(this.getTypes(node.desc)[0]).append(' ').append(node.name);
 
         return builder.toString();
     }
