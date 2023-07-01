@@ -36,7 +36,6 @@ import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TypeInsnNode;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import ik.ffm1.gradle.extensions.ModExtension;
 
@@ -49,25 +48,11 @@ public class MergeMixin extends DefaultTask {
     public void exec() throws IOException {
         Project project = this.getProject();
         File tmp = this.getTemporaryDir();
-
         File tmpMainJar = new File(tmp, "fabric-mixin.jar");
 
         Files.copy(this.mainFile.toPath(), tmpMainJar.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
         JarOutputStream mixinOutput = new JarOutputStream(new FileOutputStream(this.mainFile));
-
-        JarFile tmpInput = new JarFile(tmpMainJar);
-
-        tmpInput.stream().forEach(file -> {
-            if (!file.isDirectory()) {
-                try {
-                    this.writeFile(mixinOutput, new JarEntry(file.getName()), tmpInput.getInputStream(file));
-                } catch (IOException e) {}
-            }
-        });
-
-        tmpInput.close();
-
         ModExtension mod = project.getExtensions().getByType(ModExtension.class);
         String pkg = mod.get("package") + ".mixin.";
         String pkgPath = pkg.replace('.', '/');
@@ -106,11 +91,21 @@ public class MergeMixin extends DefaultTask {
             plugins.put(entry.getKey(), pluginList);
         }
 
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        mixinOutput.putNextEntry(new JarEntry("plugins.json"));
-        mixinOutput.write(gson.toJson(plugins).getBytes("UTF-8"));
-        mixinOutput.closeEntry();
+        String mixins = new Gson().toJson(plugins);
+        JarFile tmpInput = new JarFile(tmpMainJar);
 
+        tmpInput.stream().forEach(file -> {
+            if (!file.isDirectory()) {
+                try {
+                    if (file.getName().endsWith(".class")) {
+                        this.writeFile(mixinOutput, new JarEntry(file.getName()), injectMixins(tmpInput.getInputStream(file), mixins));
+                    } else {
+                        this.writeFile(mixinOutput, new JarEntry(file.getName()), tmpInput.getInputStream(file));
+                    }
+                } catch (IOException e) {}
+            }
+        });
+        tmpInput.close();
         mixinOutput.close();
     }
 
@@ -207,6 +202,30 @@ public class MergeMixin extends DefaultTask {
                 for (LocalVariableNode v : method.localVariables) {
                     v.desc = replaceHead(v.desc, fromPkg, toPkg);
                     v.signature = replaceHead(v.signature, fromPkg, toPkg);
+                }
+            }
+        }
+
+        ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
+        node.accept(cw);
+
+        return cw.toByteArray();
+    }
+
+    private static byte[] injectMixins(InputStream input, String mixins) throws IOException {
+        ClassReader cr = new ClassReader(input);
+        ClassNode node = new ClassNode();
+
+        cr.accept(node, ClassReader.SKIP_FRAMES);
+
+        for (MethodNode m : node.methods) {
+            for (AbstractInsnNode n = m.instructions.getFirst(); n != null; n = n.getNext()) {
+                if (n instanceof LdcInsnNode) {
+                    LdcInsnNode l = (LdcInsnNode) n;
+
+                    if (l.cst.equals("<MIXINS_JSON>")) {
+                        l.cst = mixins;
+                    }
                 }
             }
         }

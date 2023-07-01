@@ -1,7 +1,5 @@
 package krash220.xbob.mixin;
 
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -30,8 +28,8 @@ public class MixinPlugin implements IMixinConfigPlugin {
         this.version = String.join(".", parts[0], parts[1]);
 
         try {
-            this.plugins = (Map<String, List<String>>) new Gson().fromJson(new InputStreamReader(MixinPlugin.class.getResourceAsStream("/plugins.json"), "UTF-8"), TypeToken.getParameterized(Map.class, String.class, TypeToken.getParameterized(List.class, String.class).getType()).getType());
-        } catch (JsonIOException | JsonSyntaxException | UnsupportedEncodingException e) {}
+            this.plugins = (Map<String, List<String>>) new Gson().fromJson("<MIXINS_JSON>", TypeToken.getParameterized(Map.class, String.class, TypeToken.getParameterized(List.class, String.class).getType()).getType());
+        } catch (JsonIOException | JsonSyntaxException e) {}
     }
 
     @Override
