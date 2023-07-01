@@ -9,7 +9,7 @@ import com.mojang.math.Axis;
 public class MatrixStack {
 
     public final PoseStack mat;
-    
+
     public MatrixStack() {
         this.mat = new PoseStack();
     }

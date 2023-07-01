@@ -7,7 +7,7 @@ import java.util.function.BiConsumer;
 import krash220.xbob.game.api.math.MatrixStack;
 
 public class GuiBus {
-    
+
     public static float partialTicks;
 
     private static List<BiConsumer<MatrixStack, Float>> pre = new ArrayList<>();

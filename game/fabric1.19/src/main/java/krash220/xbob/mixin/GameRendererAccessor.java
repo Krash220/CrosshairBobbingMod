@@ -19,7 +19,7 @@ public interface GameRendererAccessor {
 
     @Invoker("bobView")
     void bobView(MatrixStack mat, float partialTicks);
-    
+
     @Invoker("getFov")
     double getFov(Camera camera, float tickDelta, boolean changingFov);
 }

@@ -32,7 +32,7 @@ public class MainMod {
             Render.updateCameraMatrix(this.matrix, partialTicks);
             Render.bobView(this.matrix, partialTicks);
             Render.distortion(this.matrix, partialTicks);
-            
+
             float item = 1.0f - Player.changeItemProgress(partialTicks);
             float swing = Player.swingProgress(partialTicks);
 

@@ -7,7 +7,7 @@ import com.mojang.math.Vector4f;
 public class MatrixStack {
 
     public final PoseStack mat;
-    
+
     public MatrixStack() {
         this.mat = new PoseStack();
     }

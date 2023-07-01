@@ -1,7 +1,7 @@
 package krash220.xbob.game.api;
 
 public class Player {
-    
+
     public static float spinProgress(float partialTicks) {throw new UnsupportedOperationException();}
 
     public static float sneakProgress(float partialTicks) {throw new UnsupportedOperationException();}

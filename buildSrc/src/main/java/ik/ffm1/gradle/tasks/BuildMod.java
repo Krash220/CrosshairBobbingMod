@@ -90,7 +90,7 @@ public class BuildMod extends DefaultTask {
                 } catch (IOException e) {}
             }
         });
-        
+
         source.close();
     }
 

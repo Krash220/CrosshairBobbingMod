@@ -12,7 +12,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class GuiBus {
-    
+
     private static boolean registered = false;
 
     private static List<BiConsumer<MatrixStack, Float>> pre = new ArrayList<>();
@@ -31,7 +31,7 @@ public class GuiBus {
     public static void pre(RenderGameOverlayEvent.Pre event) {
         if (event.getType() == ElementType.CROSSHAIRS) {
             MatrixStack mat = new MatrixStack(event.getMatrixStack());
-            
+
             for (BiConsumer<MatrixStack, Float> handler : pre) {
                 handler.accept(mat, event.getPartialTicks());
             }

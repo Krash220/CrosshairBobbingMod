@@ -5,7 +5,7 @@ import java.nio.file.spi.FileSystemProvider;
 import krash220.xbob.loader.fs.AbstractFileSystem;
 
 class ModFileSystem extends AbstractFileSystem {
-    
+
     static final ModFileSystem INSTANCE = new ModFileSystem();
 
     @Override

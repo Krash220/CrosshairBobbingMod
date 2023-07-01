@@ -17,6 +17,6 @@ public class Render {
     public static void updateCameraMatrix(MatrixStack mat, float partialTicks) {throw new UnsupportedOperationException();}
 
     public static float getReachDistance() {throw new UnsupportedOperationException();}
-    
+
     public static void distortion(MatrixStack mat, float partialTicks) {throw new UnsupportedOperationException();}
 }

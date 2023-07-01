@@ -7,7 +7,7 @@ import net.minecraft.util.math.vector.Vector4f;
 public class MatrixStack {
 
     public final com.mojang.blaze3d.matrix.MatrixStack mat;
-    
+
     public MatrixStack() {
         this.mat = new com.mojang.blaze3d.matrix.MatrixStack();
     }

@@ -74,7 +74,7 @@ public class ProjectPlugin implements Plugin<Project> {
         for (Entry<Object, Object> entry : properties.entrySet()) {
             expand.put(entry.getKey().toString().toUpperCase(), entry.getValue().toString());
         }
-        
+
         root.allprojects(project -> {
             project.getExtensions().add("mod", new ModExtension(properties));
         });

@@ -11,7 +11,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class GuiBus {
-    
+
     private static boolean registered = false;
 
     private static List<BiConsumer<MatrixStack, Float>> pre = new ArrayList<>();
