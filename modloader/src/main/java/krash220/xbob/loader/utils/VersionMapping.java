@@ -13,7 +13,7 @@ public class VersionMapping {
     private static final Map<Integer, String> mapping = ImmutableMap.<Integer, String>builder()
             .put(11602, "1.16.2")
             .put(11700, "1.17")
-            .put(11800, "1.18")
+//            .put(11800, "1.18")
             .put(11900, "1.19")
             .put(11903, "1.19.3")
             .put(11200, "1.20")

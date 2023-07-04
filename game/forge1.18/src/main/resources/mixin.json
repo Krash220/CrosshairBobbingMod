@@ -1,5 +1,0 @@
-{
-    "required": true,
-    "package": "${MOD_PACKAGE}.mixin",
-    "refmap": "mixin.${MOD_ID}.refmap.json"
-}
