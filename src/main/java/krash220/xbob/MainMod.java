@@ -84,7 +84,7 @@ public class MainMod {
 
             if (using == ItemType.EATING) {
                 if (usingProgress >= 0.2 && usingProgress < 0.9) {
-                    offsetX += interpolation(Math::sin, (usingProgress - 0.2) / 0.7, 0.0, 6.0 * Math.PI, false) * -0.005;
+                    offsetX += interpolation(Math::sin, (usingProgress - 0.2) / 0.7, 0.0, 6.0 * Math.PI, false) * -0.01;
                 }
             }
 
