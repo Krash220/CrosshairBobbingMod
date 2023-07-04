@@ -16,7 +16,7 @@ public class VersionMapping {
 //            .put(11800, "1.18")
             .put(11900, "1.19")
             .put(11903, "1.19.3")
-            .put(11200, "1.20")
+            .put(12000, "1.20")
             .build();
 
     private static final Pattern RELEASE_PATTERN = Pattern.compile("(\\d+)\\.(\\d+)(?:\\.(\\d+))?");
