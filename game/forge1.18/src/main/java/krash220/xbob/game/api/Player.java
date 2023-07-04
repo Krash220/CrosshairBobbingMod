@@ -18,6 +18,8 @@ import net.minecraft.world.item.UseAnim;
 public class Player {
 
     private static Pose lastPose;
+    private static float lastHandHeight;
+    private static int lastSlot = -1;
 
     public static float spinProgress(float partialTicks) {
         Minecraft mc = Minecraft.getInstance();
@@ -74,7 +76,15 @@ public class Player {
 
         if (camera.getEntity() == player && player.isUsingItem()) {
             ItemStack item = player.getUseItem();
-            return (item.getUseDuration() - (player.getUseItemRemainingTicks() - partialTicks + 1.0f)) / item.getUseDuration();
+            float f = item.getUseDuration() - (player.getUseItemRemainingTicks() - partialTicks + 1.0f);
+
+            if (item.getUseAnimation() == UseAnim.BOW) {
+                return Math.min(f / 20f, 1.0f);
+            } else if (item.getUseAnimation() == UseAnim.SPEAR) {
+                return Math.min(f / 10f, 1.0f);
+            } else {
+                return f / item.getUseDuration();
+            }
         }
 
         return 1.0f;
@@ -143,10 +153,22 @@ public class Player {
         Camera camera = mc.gameRenderer.getMainCamera();
         LocalPlayer player = mc.player;
 
-        if (camera.getEntity() == player && !player.isUsingItem() && !player.isHandsBusy() && !player.isAutoSpinAttack()) {
-            return (float) (accessor.getMainHandHeight() - accessor.getPrevMainHandHeight()) * partialTicks + accessor.getPrevMainHandHeight();
+        if (camera.getEntity() == player && !player.isHandsBusy() && !player.isUsingItem() && !player.swinging) {
+            float height = (accessor.getMainHandHeight() - accessor.getPrevMainHandHeight()) * partialTicks + accessor.getPrevMainHandHeight();
+
+            if (player.getMainHandItem().getItem() == accessor.getMainHandItem().getItem() && lastSlot == player.getInventory().selected) {
+                lastHandHeight = Math.max(lastHandHeight, height);
+
+                return lastHandHeight;
+            } else {
+                lastSlot = player.getInventory().selected;
+                lastHandHeight = 0.0f;
+
+                return height;
+            }
         }
 
+        lastHandHeight = 1.0f;
         return 1.0f;
     }
 

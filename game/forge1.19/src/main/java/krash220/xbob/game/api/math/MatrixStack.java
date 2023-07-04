@@ -1,10 +1,8 @@
 package krash220.xbob.game.api.math;
 
-import org.joml.Vector3f;
-import org.joml.Vector4f;
-
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Axis;
+import com.mojang.math.Vector3f;
+import com.mojang.math.Vector4f;
 
 public class MatrixStack {
 
@@ -31,7 +29,7 @@ public class MatrixStack {
     }
 
     public void rotate(float angle, float x, float y, float z) {
-        this.mat.m_252781_(Axis.m_253057_(new Vector3f(x, y, z)).m_252977_(angle));
+        this.mat.mulPose(new Vector3f(x, y, z).rotationDegrees(angle));
     }
 
     public void scale(float x, float y, float z) {
@@ -39,13 +37,13 @@ public class MatrixStack {
     }
 
     public void identity() {
-        this.mat.last().m_252922_().identity();
+        this.mat.last().pose().setIdentity();
     }
 
     public float[] multiplyVector(float x, float y, float z, float w) {
         Vector4f vec = new Vector4f(x, y, z, w);
 
-        vec.mul(this.mat.last().m_252922_());
+        vec.transform(this.mat.last().pose());
 
         return new float[] {vec.x(), vec.y(), vec.z(), vec.w()};
     }

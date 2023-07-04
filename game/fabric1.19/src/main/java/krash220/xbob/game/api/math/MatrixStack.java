@@ -1,9 +1,7 @@
 package krash220.xbob.game.api.math;
 
-import org.joml.Vector3f;
-import org.joml.Vector4f;
-
-import net.minecraft.util.math.RotationAxis;
+import net.minecraft.util.math.Vec3f;
+import net.minecraft.util.math.Vector4f;
 
 public class MatrixStack {
 
@@ -30,7 +28,7 @@ public class MatrixStack {
     }
 
     public void rotate(float angle, float x, float y, float z) {
-        this.mat.multiply(RotationAxis.of(new Vector3f(x, y, z)).rotationDegrees(angle));
+        this.mat.multiply(new Vec3f(x, y, z).getDegreesQuaternion(angle));
     }
 
     public void scale(float x, float y, float z) {
@@ -38,14 +36,14 @@ public class MatrixStack {
     }
 
     public void identity() {
-        this.mat.peek().getPositionMatrix().identity();
+        this.mat.peek().getPositionMatrix().loadIdentity();
     }
 
     public float[] multiplyVector(float x, float y, float z, float w) {
         Vector4f vec = new Vector4f(x, y, z, w);
 
-        vec.mul(this.mat.peek().getPositionMatrix());
+        vec.transform(this.mat.peek().getPositionMatrix());
 
-        return new float[] {vec.x, vec.y, vec.z, vec.w};
+        return new float[] {vec.getX(), vec.getY(), vec.getZ(), vec.getW()};
     }
 }

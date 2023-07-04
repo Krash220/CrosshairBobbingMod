@@ -41,6 +41,13 @@ dependencyResolutionManagement {
                 artifact()
             }
         }
+		maven {
+            name = 'Quilt'
+            url = 'https://maven.quiltmc.org/repository/release'
+            metadataSources {
+                artifact()
+            }
+        }
     }
 }
 

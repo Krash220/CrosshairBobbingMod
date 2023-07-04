@@ -18,6 +18,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import com.google.common.collect.ImmutableList;
 
 import krash220.xbob.loader.utils.Jre8ZipFs;
+import krash220.xbob.loader.utils.VersionMapping;
 import net.minecraftforge.fml.loading.moddiscovery.ExplodedDirectoryLocator;
 
 public class ModLocator extends ExplodedDirectoryLocator {
@@ -30,8 +31,8 @@ public class ModLocator extends ExplodedDirectoryLocator {
     @Override
     public void initArguments(Map<String, ?> arguments) {
         HashMap<String, Object> map = new HashMap<>(arguments);
-        String[] ver = ((String) arguments.get("mcVersion")).split("\\.");
-        int v = Integer.parseInt(ver[0]) * 100 + Integer.parseInt(ver[1]);
+        String version = (String) arguments.get("mcVersion");
+        String lib = VersionMapping.get(version);
 
         URI uri = null;
         Path loader = null;
@@ -60,7 +61,7 @@ public class ModLocator extends ExplodedDirectoryLocator {
         FileSystem fs = FileSystems.getFileSystem(uri);
 
         Path mod = fs.getPath("/mod.jar");
-        Path core = fs.getPath("/META-INF/core/forge" + ver[0] + "." + ver[1] + ".jar");
+        Path core = fs.getPath("/META-INF/core/forge" + lib + ".jar");
 
         if (!Files.exists(mod)) {
             throw new Error("[${MOD_ID}] Missing mod.jar.");
@@ -79,7 +80,7 @@ public class ModLocator extends ExplodedDirectoryLocator {
             core = new ModPath(Jre8ZipFs.newZipFs(core).getPath("/"), loader);
         }
 
-        if (v > 116) {
+        if (VersionMapping.getNum(version) >= 11700) {
             map.put("explodedTargets", ImmutableList.of(new ExplodedMod("${MOD_ID}", ImmutableList.of(mod, core))));
         } else {
             map.put("explodedTargets", ImmutableList.of(ImmutablePair.of(mod, ImmutableList.of(mod, core))));

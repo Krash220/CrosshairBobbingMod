@@ -18,6 +18,8 @@ import net.minecraft.util.math.MathHelper;
 public class Player {
 
     private static EntityPose lastPose;
+    private static float lastHandHeight;
+    private static int lastSlot = -1;
 
     public static float spinProgress(float partialTicks) {
         MinecraftClient mc = MinecraftClient.getInstance();
@@ -74,7 +76,15 @@ public class Player {
 
         if (camera.getFocusedEntity() == player && player.isUsingItem()) {
             ItemStack item = player.getActiveItem();
-            return (item.getMaxUseTime() - (player.getItemUseTimeLeft() - partialTicks + 1.0f)) / item.getMaxUseTime();
+            float f = item.getMaxUseTime() - (player.getItemUseTimeLeft() - partialTicks + 1.0f);
+
+            if (item.getUseAction() == UseAction.BOW) {
+                return Math.min(f / 20f, 1.0f);
+            } else if (item.getUseAction() == UseAction.SPEAR) {
+                return Math.min(f / 10f,  1.0f);
+            } else {
+                return f / item.getMaxUseTime();
+            }
         }
 
         return 1.0f;
@@ -143,10 +153,22 @@ public class Player {
         Camera camera = mc.gameRenderer.getCamera();
         ClientPlayerEntity player = mc.player;
 
-        if (camera.getFocusedEntity() == player && !player.isUsingItem() && !player.isRiding() && !player.isUsingRiptide()) {
-            return (float) (accessor.getEquipProgressMainHand() - accessor.getPrevEquipProgressMainHand()) * partialTicks + accessor.getPrevEquipProgressMainHand();
+        if (camera.getFocusedEntity() == player && !player.isRiding() && !player.isUsingItem() && !player.handSwinging) {
+            float height = (accessor.getEquipProgressMainHand() - accessor.getPrevEquipProgressMainHand()) * partialTicks + accessor.getPrevEquipProgressMainHand();
+
+            if (player.getInventory().getMainHandStack().getItem() == accessor.getMainHand().getItem() && lastSlot == player.getInventory().selectedSlot) {
+                lastHandHeight = Math.max(lastHandHeight, height);
+
+                return lastHandHeight;
+            } else {
+                lastSlot = player.getInventory().selectedSlot;
+                lastHandHeight = 0.0f;
+
+                return height;
+            }
         }
 
+        lastHandHeight = 1.0f;
         return 1.0f;
     }
 

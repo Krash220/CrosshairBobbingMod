@@ -1,4 +1,4 @@
-// Apply to fabric* project (exclude fabric-mixin)
+// Apply to fabric* project
 
 apply plugin: 'fabric-loom'
 

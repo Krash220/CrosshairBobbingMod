@@ -1,19 +1,19 @@
 package krash220.xbob.game.api;
 
+import krash220.xbob.loader.utils.FabricQuiltUtils;
 import net.fabricmc.api.EnvType;
-import net.fabricmc.loader.impl.FabricLoaderImpl;
 
 public class Loader {
 
     public static String getPlatform() {
-        return "Fabric";
+        return FabricQuiltUtils.getPlatform();
     }
 
     public static String getVersion() {
-        return FabricLoaderImpl.INSTANCE.getGameProvider().getRawGameVersion();
+        return FabricQuiltUtils.getVersion();
     }
 
     public static boolean isClient() {
-        return FabricLoaderImpl.INSTANCE.getEnvironmentType() == EnvType.CLIENT;
+        return FabricQuiltUtils.getEnvironmentType() == EnvType.CLIENT;
     }
 }

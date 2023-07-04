@@ -13,7 +13,8 @@ import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
-import net.fabricmc.loader.impl.FabricLoaderImpl;
+import krash220.xbob.loader.utils.FabricQuiltUtils;
+import krash220.xbob.loader.utils.VersionMapping;
 
 public class MixinPlugin implements IMixinConfigPlugin {
 
@@ -23,9 +24,7 @@ public class MixinPlugin implements IMixinConfigPlugin {
     @SuppressWarnings("unchecked")
     @Override
     public void onLoad(String mixinPackage) {
-        String[] parts = FabricLoaderImpl.INSTANCE.getGameProvider().getRawGameVersion().split("\\.");
-
-        this.version = String.join(".", parts[0], parts[1]);
+        this.version = VersionMapping.get(FabricQuiltUtils.getVersion());
 
         try {
             this.plugins = (Map<String, List<String>>) new Gson().fromJson("<MIXINS_JSON>", TypeToken.getParameterized(Map.class, String.class, TypeToken.getParameterized(List.class, String.class).getType()).getType());

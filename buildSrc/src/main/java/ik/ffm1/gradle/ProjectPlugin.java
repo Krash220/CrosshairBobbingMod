@@ -39,6 +39,7 @@ public class ProjectPlugin implements Plugin<Project> {
 
         logger.lifecycle("Welcome to Forge & Fabric Mixin One!");
 
+        root.getDependencies().add("implementation", root.project(":modloader"));
         root.getDependencies().add("implementation", root.project(":game:api"));
 
         File prop = root.file("mod.properties");
@@ -185,8 +186,10 @@ public class ProjectPlugin implements Plugin<Project> {
 
             if (type != null) {
                 build.dependsOn(project.getTasks().named("assemble"));
+                project.getDependencies().add("implementation", root.project(":modloader"));
 
                 if (!project.getName().equals("fabric-mixin")) {
+
                     Validate validate = project.getTasks().create("validateApi", Validate.class, task -> {
                         task.dependsOn(game.project("api").getTasks().named("jar"));
                     });

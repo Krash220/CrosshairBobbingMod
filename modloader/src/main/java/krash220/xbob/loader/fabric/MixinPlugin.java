@@ -1,14 +1,13 @@
 package krash220.xbob.loader.fabric;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -19,49 +18,42 @@ import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 
-import net.fabricmc.loader.impl.FabricLoaderImpl;
-import net.fabricmc.loader.impl.game.patch.GameTransformer;
-import net.fabricmc.loader.impl.gui.FabricGuiEntry;
+import krash220.xbob.loader.utils.FabricQuiltUtils;
+import krash220.xbob.loader.utils.VersionMapping;
 
 public class MixinPlugin implements IMixinConfigPlugin {
 
     @SuppressWarnings("unchecked")
     @Override
     public void onLoad(String mixinPackage) {
-        String[] ver = FabricLoaderImpl.INSTANCE.getGameProvider().getRawGameVersion().split("\\.");
+        String version = FabricQuiltUtils.getVersion();
+        String lib = VersionMapping.get(version);
 
-        if (ver.length < 2) {
-            FabricGuiEntry.displayError("Incompatible mod.", new RuntimeException("[${MOD_ID}] This mod do not support Minecraft " + ver[0]), true);
-            throw new RuntimeException("This mod do not support Minecraft " + ver[0]);
-        }
-
-        String coreFile = "/META-INF/core/fabric" + ver[0] + "." + ver[1] + ".jar";
+        String coreFile = "/META-INF/core/fabric" + lib + ".jar";
         FileSystem fs = null;
 
         try {
             URI uri = MixinPlugin.class.getResource("MixinPlugin.class").toURI();
-            fs = FileSystems.newFileSystem(uri, new HashMap<>());
+            fs = FabricQuiltUtils.getFileSystem(uri);
         } catch (URISyntaxException | IOException e) {}
 
         Path core = fs.getPath(coreFile);
 
         if (!Files.exists(core)) {
-            FabricGuiEntry.displayError("Incompatible mod.", new RuntimeException("[${MOD_ID}] This mod do not support Minecraft " + FabricLoaderImpl.INSTANCE.getGameProvider().getRawGameVersion()), true);
-            throw new RuntimeException("This mod do not support Minecraft " + FabricLoaderImpl.INSTANCE.getGameProvider().getRawGameVersion());
+            FabricQuiltUtils.displayError("Incompatible mod.", "[${MOD_ID}] This mod do not support Minecraft " + version, true);
         }
 
         Map<String, byte[]> patchedClasses = null;
 
         try {
-            GameTransformer transformer = FabricLoaderImpl.INSTANCE.getGameProvider().getEntrypointTransformer();
+            Object transformer = FabricQuiltUtils.getGameTransformer();
             Field patched = transformer.getClass().getDeclaredField("patchedClasses");
             patched.setAccessible(true);
             patchedClasses = (Map<String, byte[]>) patched.get(transformer);
         } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {}
 
         if (patchedClasses == null) {
-            FabricGuiEntry.displayError("Incompatible mod.", new RuntimeException("Unable to load this mod."), false);
-            new RuntimeException("Unable to load this mod.");
+            FabricQuiltUtils.displayError("Incompatible mod.", "Unable to load this mod.", true);
         }
 
         try {
@@ -85,8 +77,7 @@ public class MixinPlugin implements IMixinConfigPlugin {
 
             input.close();
         } catch (IOException e1) {
-            FabricGuiEntry.displayError("Incompatible mod.", new RuntimeException("This mod is damaged."), false);
-            throw new RuntimeException("This mod is damaged.");
+            FabricQuiltUtils.displayError("Incompatible mod.", "This mod is damaged.", true);
         }
     }
 

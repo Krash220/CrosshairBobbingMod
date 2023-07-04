@@ -15,6 +15,10 @@ dependencies {
     implementation 'net.fabricmc:fabric-loader:0.14.14'
     implementation 'org.spongepowered:mixin:0.8.5'
     implementation 'org.ow2.asm:asm-tree:9.4'
+
+    implementation('org.quiltmc:quilt-loader:0.17.0') {
+    	exclude group: 'net.fabricmc'
+    }
 }
 
 processResources {

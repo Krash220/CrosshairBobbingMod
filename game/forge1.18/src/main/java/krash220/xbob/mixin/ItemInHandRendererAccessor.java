@@ -4,6 +4,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
 import net.minecraft.client.renderer.ItemInHandRenderer;
+import net.minecraft.world.item.ItemStack;
 
 @Mixin(ItemInHandRenderer.class)
 public interface ItemInHandRendererAccessor {
@@ -13,4 +14,7 @@ public interface ItemInHandRendererAccessor {
 
     @Accessor("oMainHandHeight")
     float getPrevMainHandHeight();
+
+    @Accessor("mainHandItem")
+    ItemStack getMainHandItem();
 }
