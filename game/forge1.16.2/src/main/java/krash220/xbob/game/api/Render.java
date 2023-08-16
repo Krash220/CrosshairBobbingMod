@@ -3,6 +3,7 @@ package krash220.xbob.game.api;
 import krash220.xbob.game.api.math.MatrixStack;
 import krash220.xbob.mixin.GameRendererAccessor;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.settings.PointOfView;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.math.MathHelper;
 
@@ -24,7 +25,7 @@ public class Render {
     public static boolean isDebugCrosshair() {
         Minecraft mc = Minecraft.getInstance();
 
-        return mc.options.renderDebug && !mc.options.hideGui && !mc.player.isReducedDebugInfo() && !mc.options.reducedDebugInfo;
+        return mc.options.hideGui || mc.options.getCameraType() != PointOfView.FIRST_PERSON || mc.options.renderDebug && !mc.player.isReducedDebugInfo() && !mc.options.reducedDebugInfo;
     }
 
     public static void bobView(MatrixStack mat, float partialTicks) {

@@ -12,13 +12,13 @@ import net.minecraft.client.util.math.MatrixStack;
 @Mixin(InGameHud.class)
 public class InGameHudMixin {
 
-    @Inject(method = "renderCrosshair", at = @At("HEAD"))
-    public void beforeRender(MatrixStack mat, CallbackInfo ci) {
+    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;renderCrosshair(Lnet/minecraft/client/util/math/MatrixStack;)V"))
+    public void beforeRender(MatrixStack mat, float tickDelta, CallbackInfo ci) {
         GuiBus.pre(mat);
     }
 
-    @Inject(method = "renderCrosshair", at = @At("RETURN"))
-    public void afterRender(MatrixStack mat, CallbackInfo ci) {
+    @Inject(method = "render", at = @At(value = "INVOKE_STRING", target = "Lnet/minecraft/util/profiler/Profiler;push(Ljava/lang/String;)V", args="ldc=bossHealth"))
+    public void afterRender(MatrixStack mat, float tickDelta, CallbackInfo ci) {
         GuiBus.post(mat);
     }
 }

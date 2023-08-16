@@ -2,6 +2,7 @@ package krash220.xbob.game.api;
 
 import krash220.xbob.game.api.math.MatrixStack;
 import krash220.xbob.mixin.GameRendererAccessor;
+import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffects;
@@ -23,7 +24,7 @@ public class Render {
     public static boolean isDebugCrosshair() {
         Minecraft mc = Minecraft.getInstance();
 
-        return mc.options.renderDebug && !mc.options.hideGui && !mc.player.isReducedDebugInfo() && !mc.options.reducedDebugInfo().get().booleanValue();
+        return mc.options.hideGui || mc.options.getCameraType() != CameraType.FIRST_PERSON || mc.options.renderDebug && !mc.player.isReducedDebugInfo() && !mc.options.reducedDebugInfo().get();
     }
 
     public static void bobView(MatrixStack mat, float partialTicks) {

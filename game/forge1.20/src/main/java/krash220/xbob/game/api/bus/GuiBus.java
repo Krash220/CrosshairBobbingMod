@@ -8,6 +8,7 @@ import krash220.xbob.game.api.math.MatrixStack;
 import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class GuiBus {
@@ -26,9 +27,9 @@ public class GuiBus {
         GuiBus.post.add(post);
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void pre(RenderGuiOverlayEvent.Pre event) {
-        if (event.getOverlay() == VanillaGuiOverlay.CROSSHAIR.type()) {
+        if (event.getOverlay() == VanillaGuiOverlay.CROSSHAIR.type() && !event.isCanceled()) {
             MatrixStack mat = new MatrixStack(event.getGuiGraphics().pose());
 
             for (BiConsumer<MatrixStack, Float> handler : pre) {

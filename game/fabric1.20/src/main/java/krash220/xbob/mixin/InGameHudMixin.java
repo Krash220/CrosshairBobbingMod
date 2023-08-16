@@ -12,13 +12,13 @@ import net.minecraft.client.gui.hud.InGameHud;
 @Mixin(InGameHud.class)
 public class InGameHudMixin {
 
-    @Inject(method = "renderCrosshair", at = @At("HEAD"))
-    public void beforeRender(DrawContext context, CallbackInfo ci) {
+    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;renderCrosshair(Lnet/minecraft/client/gui/DrawContext;)V"))
+    public void beforeRender(DrawContext context, float tickDelta, CallbackInfo ci) {
         GuiBus.pre(context.getMatrices());
     }
 
-    @Inject(method = "renderCrosshair", at = @At("RETURN"))
-    public void afterRender(DrawContext context, CallbackInfo ci) {
+    @Inject(method = "render", at = @At(value = "INVOKE_STRING", target = "Lnet/minecraft/util/profiler/Profiler;push(Ljava/lang/String;)V", args="ldc=bossHealth"))
+    public void afterRender(DrawContext context, float tickDelta, CallbackInfo ci) {
         GuiBus.post(context.getMatrices());
     }
 }
