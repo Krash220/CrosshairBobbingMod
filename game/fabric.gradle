@@ -2,9 +2,24 @@
 
 apply plugin: 'fabric-loom'
 
+repositories {
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = "Modrinth"
+                url = "https://api.modrinth.com/maven"
+            }
+        }
+        filter {
+            includeGroup "maven.modrinth"
+        }
+    }
+}
+
 dependencies {
     minecraft "com.mojang:minecraft:${project.mc_version}"
     mappings "net.fabricmc:yarn:${project.mc_version}+build.${project.yarn_build}:v2"
     modImplementation "net.fabricmc:fabric-loader:0.14.14"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric}"
+    modImplementation "maven.modrinth:modmenu:${project.modmenu}"
 }

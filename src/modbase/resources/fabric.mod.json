@@ -12,8 +12,11 @@
     },
     "license": "${MOD_LICENSE}",
     "entrypoints": {
-        "main": [
+        "client": [
             "${MOD_PACKAGE}.platform.FabricLoader"
+        ],
+        "modmenu": [
+        	"${MOD_PACKAGE}.game.api.Config\u0024ModMenu"
         ]
     },
     "depends": {

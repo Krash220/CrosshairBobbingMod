@@ -1,0 +1,15 @@
+{
+    "modmenu.nameTranslation.${MOD_ID}": "準心晃動",
+    "modmenu.descriptionTranslation.${MOD_ID}": "令準心跟隨視角晃動。",
+    "${MOD_ID}.config.title": "準心晃動 設定",
+    "${MOD_ID}.config.bob": "跟隨視角晃動",
+    "${MOD_ID}.config.sneak": "潛行動畫",
+    "${MOD_ID}.config.item": "物品切換動畫",
+    "${MOD_ID}.config.aim": "瞄準動畫",
+    "${MOD_ID}.config.spear": "三叉戟激流動畫",
+    "${MOD_ID}.config.xbow": "弩蓄力動畫",
+    "${MOD_ID}.config.eat": "食物使用動畫",
+    "${MOD_ID}.config.atk": "攻擊動畫",
+    "${MOD_ID}.config.value.enable": "啟用",
+    "${MOD_ID}.config.value.disable": "禁用"
+}

@@ -1,17 +1,19 @@
 package krash220.xbob.loader.utils;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 
+import org.quiltmc.loader.api.QuiltLoader;
 import org.quiltmc.loader.impl.QuiltLoaderImpl;
 import org.quiltmc.loader.impl.gui.QuiltGuiEntry;
 
 import net.fabricmc.api.EnvType;
+import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.impl.FabricLoaderImpl;
 import net.fabricmc.loader.impl.gui.FabricGuiEntry;
 
@@ -73,6 +75,14 @@ public class FabricQuiltUtils {
             return Paths.get(uri).getFileSystem();
         } else {
             return FileSystems.newFileSystem(uri, new HashMap<>());
+        }
+    }
+
+    public static File getConfigDir() {
+        if (isQuilt) {
+            return QuiltLoader.getConfigDir().toFile();
+        } else {
+            return FabricLoader.getInstance().getConfigDir().toFile();
         }
     }
 }

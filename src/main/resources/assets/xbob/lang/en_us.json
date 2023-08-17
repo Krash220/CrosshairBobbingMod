@@ -1,0 +1,13 @@
+{
+    "${MOD_ID}.config.title": "Corsshair Bobbing Configuration",
+    "${MOD_ID}.config.bob": "Following View-bobbing",
+    "${MOD_ID}.config.sneak": "Sneaking Animation",
+    "${MOD_ID}.config.item": "Changing Item Animation",
+    "${MOD_ID}.config.aim": "Aiming Animation",
+    "${MOD_ID}.config.spear": "Trident Animation",
+    "${MOD_ID}.config.xbow": "Crossbow Animation",
+    "${MOD_ID}.config.eat": "Eating Animation",
+    "${MOD_ID}.config.atk": "Attacking Animation",
+    "${MOD_ID}.config.value.enable": "Enabled",
+    "${MOD_ID}.config.value.disable": "Disabled"
+}

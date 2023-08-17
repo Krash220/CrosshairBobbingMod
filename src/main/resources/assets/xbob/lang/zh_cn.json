@@ -1,0 +1,15 @@
+{
+    "modmenu.nameTranslation.${MOD_ID}": "准星摇晃",
+    "modmenu.descriptionTranslation.${MOD_ID}": "令准星跟随视角摇晃。",
+    "${MOD_ID}.config.title": "准星摇晃 配置",
+    "${MOD_ID}.config.bob": "跟随视角摇晃",
+    "${MOD_ID}.config.sneak": "潜行动画",
+    "${MOD_ID}.config.item": "物品切换动画",
+    "${MOD_ID}.config.aim": "瞄准动画",
+    "${MOD_ID}.config.spear": "三叉戟激流动画",
+    "${MOD_ID}.config.xbow": "弩蓄力动画",
+    "${MOD_ID}.config.eat": "食物使用动画",
+    "${MOD_ID}.config.atk": "攻击动画",
+    "${MOD_ID}.config.value.enable": "启用",
+    "${MOD_ID}.config.value.disable": "禁用"
+}
