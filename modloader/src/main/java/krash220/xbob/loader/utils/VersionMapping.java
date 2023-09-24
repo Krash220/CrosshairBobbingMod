@@ -1,5 +1,6 @@
 package krash220.xbob.loader.utils;
 
+import java.util.Comparator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -17,6 +18,7 @@ public class VersionMapping {
             .put(11900, "1.19")
             .put(11903, "1.19.3")
             .put(12000, "1.20")
+            .put(12002, "1.20.2")
             .build();
 
     private static final Pattern RELEASE_PATTERN = Pattern.compile("(\\d+)\\.(\\d+)(?:\\.(\\d+))?");
@@ -107,11 +109,7 @@ public class VersionMapping {
     public static String get(String version) {
         final int v = getNum(version);
 
-        Optional<Entry<Integer, String>> result = mapping.entrySet().stream().filter(e -> {
-            return e.getKey() <= v;
-        }).max((a, b) -> {
-            return a.getKey() - b.getKey();
-        });
+        Optional<Entry<Integer, String>> result = mapping.entrySet().stream().filter(e -> e.getKey() <= v).max(Comparator.comparingInt(Entry::getKey));
 
         if (result.isPresent()) {
             return result.get().getValue();
