@@ -19,4 +19,6 @@ public class Render {
     public static float getReachDistance() {throw new UnsupportedOperationException();}
 
     public static void distortion(MatrixStack mat, float partialTicks) {throw new UnsupportedOperationException();}
+
+    public static float getCenterDepth() {throw new UnsupportedOperationException();}
 }

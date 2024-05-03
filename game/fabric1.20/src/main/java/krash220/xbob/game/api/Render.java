@@ -4,8 +4,12 @@ import krash220.xbob.game.api.math.MatrixStack;
 import krash220.xbob.mixin.GameRendererAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.Perspective;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.RaycastContext;
 
 public class Render {
 
@@ -61,5 +65,27 @@ public class Render {
            float f2 = -(((GameRendererAccessor) mc.gameRenderer).getTicks() + tickDelta) * i;
            mat.rotate(f2, 0.0F, MathHelper.SQUARE_ROOT_OF_TWO / 2.0F, MathHelper.SQUARE_ROOT_OF_TWO / 2.0F);
         }
+    }
+
+    public static float getCenterDepth() {
+        MinecraftClient mc = MinecraftClient.getInstance();
+        Entity entity = mc.getCameraEntity();
+        float partialTicks = mc.getTickDelta();
+
+        if (entity != null && mc.world != null) {
+            Vec3d vec3d = entity.getCameraPosVec(partialTicks);
+            Vec3d vec3d2 = entity.getRotationVec(partialTicks);
+            Vec3d vec3d3 = vec3d.add(vec3d2.x * 1000F, vec3d2.y * 1000F, vec3d2.z * 1000F);
+            HitResult result = mc.world.raycast(new RaycastContext(vec3d, vec3d3, RaycastContext.ShapeType.VISUAL, RaycastContext.FluidHandling.NONE, entity));
+
+            if (result.getType() != HitResult.Type.MISS) {
+                Vec3d begin = entity.getCameraPosVec(partialTicks);
+                Vec3d end = result.getPos();
+
+                return (float) end.distanceTo(begin);
+            }
+        }
+
+        return 1000F;
     }
 }

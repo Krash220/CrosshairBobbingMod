@@ -4,8 +4,12 @@ import krash220.xbob.game.api.math.MatrixStack;
 import krash220.xbob.mixin.GameRendererAccessor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.PointOfView;
+import net.minecraft.entity.Entity;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RayTraceContext;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class Render {
 
@@ -61,5 +65,27 @@ public class Render {
            float f2 = -(((GameRendererAccessor) mc.gameRenderer).getTick() + partialTicks) * i;
            mat.rotate(f2, 0.0F, MathHelper.SQRT_OF_TWO / 2.0F, MathHelper.SQRT_OF_TWO / 2.0F);
         }
+    }
+
+    public static float getCenterDepth() {
+        Minecraft mc = Minecraft.getInstance();
+        Entity entity = mc.getCameraEntity();
+        float partialTicks = mc.getFrameTime();
+
+        if (entity != null && mc.level != null) {
+            Vector3d vector3d = entity.getEyePosition(partialTicks);
+            Vector3d vector3d1 = entity.getViewVector(partialTicks);
+            Vector3d vector3d2 = vector3d.add(vector3d1.x * 1000F, vector3d1.y * 1000F, vector3d1.z * 1000F);
+            RayTraceResult result = mc.level.clip(new RayTraceContext(vector3d, vector3d2, RayTraceContext.BlockMode.VISUAL, RayTraceContext.FluidMode.NONE, entity));
+
+            if (result.getType() != RayTraceResult.Type.MISS) {
+                Vector3d begin = entity.getEyePosition(partialTicks);
+                Vector3d end = result.getLocation();
+
+                return (float) end.distanceTo(begin);
+            }
+        }
+
+        return 1000F;
     }
 }

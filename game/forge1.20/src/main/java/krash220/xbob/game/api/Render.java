@@ -6,6 +6,10 @@ import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 
 public class Render {
 
@@ -61,5 +65,27 @@ public class Render {
            float f2 = -(((GameRendererAccessor) mc.gameRenderer).getTick() + partialTicks) * i;
            mat.rotate(f2, 0.0F, Mth.SQRT_OF_TWO / 2.0F, Mth.SQRT_OF_TWO / 2.0F);
         }
+    }
+
+    public static float getCenterDepth() {
+        Minecraft mc = Minecraft.getInstance();
+        Entity entity = mc.getCameraEntity();
+        float partialTicks = mc.getFrameTime();
+
+        if (entity != null && mc.level != null) {
+            Vec3 vec3 = entity.getEyePosition(partialTicks);
+            Vec3 vec31 = entity.getViewVector(partialTicks);
+            Vec3 vec32 = vec3.add(vec31.x * 1000F, vec31.y * 1000F, vec31.z * 1000F);
+            HitResult result = mc.level.clip(new ClipContext(vec3, vec32, ClipContext.Block.VISUAL, ClipContext.Fluid.NONE, entity));
+
+            if (result.getType() != HitResult.Type.MISS) {
+                Vec3 begin = entity.getEyePosition(partialTicks);
+                Vec3 end = result.getLocation();
+
+                return (float) end.distanceTo(begin);
+            }
+        }
+
+        return 1000F;
     }
 }

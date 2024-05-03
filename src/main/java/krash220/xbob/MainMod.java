@@ -91,8 +91,9 @@ public class MainMod {
                 this.matrix.translate(0.0, Player.getItemShake(partialTicks) * 0.01f, 0.0);
             }
 
-            float[] pos = this.matrix.multiplyVector(0f, 0f, -Render.getReachDistance(), 1f);
-            float[] rot = this.matrix.multiplyVector(0f, 1f, -Render.getReachDistance(), 1f);
+            float dist = Math.max(Render.getCenterDepth(), Render.getReachDistance());
+            float[] pos = this.matrix.multiplyVector(0f, 0f, -dist, 1f);
+            float[] rot = this.matrix.multiplyVector(0f, 1f, -dist, 1f);
 
             float offsetX = pos[0] / pos[3];
             float offsetY = pos[1] / pos[3];
