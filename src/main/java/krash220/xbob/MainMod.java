@@ -72,6 +72,7 @@ public class MainMod {
             if (Config.check(CONFIG_BOB)) {
                 Render.bobView(this.matrix, partialTicks);
                 Render.distortion(this.matrix, partialTicks);
+                Render.camOverhaul(this.matrix);
             }
 
             float item = 1.0f - Player.changeItemProgress(partialTicks);
@@ -87,11 +88,11 @@ public class MainMod {
                 this.matrix.translate(item * 0.08, item * -0.3, 0.0);
             }
 
-            if (Config.check(CONFIG_AIM)) {
-                this.matrix.translate(0.0, Player.getItemShake(partialTicks) * 0.01f, 0.0);
-            }
+//            if (Config.check(CONFIG_AIM)) {
+//                this.matrix.translate(0.0, Player.getItemShake(partialTicks) * 0.01f, 0.0);
+//            }
 
-            float dist = Math.max(Render.getCenterDepth(), Render.getReachDistance());
+            float dist = Render.getCenterDepth();//Math.max(Render.getCenterDepth(), Render.getReachDistance());
             float[] pos = this.matrix.multiplyVector(0f, 0f, -dist, 1f);
             float[] rot = this.matrix.multiplyVector(0f, 1f, -dist, 1f);
 
@@ -115,11 +116,11 @@ public class MainMod {
             ItemType using = Player.getUsingType();
             float usingProgress = Player.usingItemProgress(partialTicks);
 
-            if (using == ItemType.EATING && Config.check(CONFIG_EAT)) {
-                if (usingProgress >= 0.2 && usingProgress < 0.9) {
-                    offsetX += interpolation(Math::sin, (usingProgress - 0.2) / 0.7, 0.0, 6.0 * Math.PI, false) * -0.01;
-                }
-            }
+//            if (using == ItemType.EATING && Config.check(CONFIG_EAT)) {
+//                if (usingProgress >= 0.2 && usingProgress < 0.9) {
+//                    offsetX += interpolation(Math::sin, (usingProgress - 0.2) / 0.7, 0.0, 6.0 * Math.PI, false) * -0.01;
+//                }
+//            }
 
             if (using == ItemType.EATING && Config.check(CONFIG_EAT)) {
                 if (usingProgress < 0.2) {
@@ -135,8 +136,8 @@ public class MainMod {
                 } else if (usingProgress >= 0.9) {
                     angle += interpolation(Math::sin, Math.min(1.0, (usingProgress - 0.9) * 10.0), 0, 0.5 * Math.PI, false) * -180.0 + 180.0;
                 }
-            } else if ((using == ItemType.BOW || using == ItemType.SPEAR) && Config.check(CONFIG_AIM)) {
-                angle = lerp(angle, -45.0f, interpolation(Math::sin, usingProgress, 0, 0.5 * Math.PI, false));
+//            } else if ((using == ItemType.BOW || using == ItemType.SPEAR) && Config.check(CONFIG_AIM)) {
+//                angle = lerp(angle, -45.0f, interpolation(Math::sin, usingProgress, 0, 0.5 * Math.PI, false));
             }
 
             if (using == ItemType.CROSSBOW && Config.check(CONFIG_XBOW)) {
@@ -144,7 +145,7 @@ public class MainMod {
                     scale *= interpolation(MainMod::fract, 1.0 - usingProgress / 0.9, 0, 5, false) * 0.8 + 1.0;
                 }
             } else if ((using == ItemType.BOW || using == ItemType.SPEAR) && Config.check(CONFIG_AIM)) {
-                scale *= interpolation(Math::sin, usingProgress, 0, 0.5 * Math.PI, false) * 1.5 + 1.0;
+                scale *= interpolation(Math::sin, usingProgress, 0, 0.5 * Math.PI, false) * 0.5 + 1.0;
                 scaleBow *= interpolation(Math::sin, usingProgress, 0, 0.5 * Math.PI, false) * -0.6 + 1.0;
             }
 
@@ -173,9 +174,9 @@ public class MainMod {
             mat.translate(offsetX, -offsetY, 0.0);
             mat.rotate(angle, 0.0f, 0.0f, 1.0f);
             mat.scale(scale, scale, scale);
-            mat.rotate(45.0f, 0.0f, 0.0f, 1.0f);
+//            mat.rotate(45.0f, 0.0f, 0.0f, 1.0f);
             mat.scale(1.0f, scaleBow, 1.0f);
-            mat.rotate(-45.0f, 0.0f, 0.0f, 1.0f);
+//            mat.rotate(-45.0f, 0.0f, 0.0f, 1.0f);
             mat.translate(-Render.getScaledWidth() * 0.5, -Render.getScaledHeight() * 0.5, 0.0);
         }
     }

@@ -15,12 +15,41 @@ buildscript {
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.spongepowered.mixin'
 
+repositories {
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = "Modrinth"
+                url = "https://api.modrinth.com/maven"
+            }
+        }
+        filter {
+            includeGroup "maven.modrinth"
+        }
+    }
+    exclusiveContent {
+        forRepository {
+            maven {
+                url "https://cursemaven.com"
+            }
+        }
+        filter {
+            includeGroup "curse.maven"
+        }
+    }
+}
+
 minecraft {
     mappings channel: project.mapping_channel, version: project.mapping_version
 }
 
 dependencies {
     minecraft "net.minecraftforge:forge:${project.forge_version}"
+    if ("1.17".compareTo(project.forge_version) < 0) {
+        implementation "maven.modrinth:camera-overhaul-reforged:EoKxgKTA"
+    } else {
+        implementation "curse.maven:camera-overhaul-forge-443034:3191725"
+    }
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }

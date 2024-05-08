@@ -22,4 +22,5 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:0.14.14"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric}"
     modImplementation "maven.modrinth:modmenu:${project.modmenu}"
+    modImplementation "maven.modrinth:cameraoverhaul:1.4.0-fabric-universal"
 }

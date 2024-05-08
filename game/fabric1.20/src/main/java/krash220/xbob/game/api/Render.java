@@ -2,6 +2,8 @@ package krash220.xbob.game.api;
 
 import krash220.xbob.game.api.math.MatrixStack;
 import krash220.xbob.mixin.GameRendererAccessor;
+import mirsario.cameraoverhaul.core.callbacks.ModifyCameraTransformCallback;
+import mirsario.cameraoverhaul.core.structures.Transform;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.Perspective;
 import net.minecraft.entity.Entity;
@@ -37,6 +39,27 @@ public class Render {
         ((GameRendererAccessor) mc.gameRenderer).tiltViewWhenHurt(mat.mat, partialTicks);
         if (mc.options.getBobView().getValue().booleanValue()) {
             ((GameRendererAccessor) mc.gameRenderer).bobView(mat.mat, partialTicks);
+        }
+    }
+
+    private static Boolean coh = null;
+
+    public static void camOverhaul(MatrixStack mat) {
+        if (coh == null) {
+            try {
+                Class.forName("mirsario.cameraoverhaul.core.callbacks.ModifyCameraTransformCallback");
+                coh = true;
+            } catch (ClassNotFoundException e) {
+                coh = false;
+            }
+        }
+
+        if (coh) {
+            Transform t = ModifyCameraTransformCallback.EVENT.Invoker().ModifyCameraTransform(null, new Transform());
+
+            mat.rotate((float) t.eulerRot.z, 0, 0, 1);
+            mat.rotate((float) t.eulerRot.x, 1, 0, 0);
+            mat.rotate((float) t.eulerRot.y, 0, 1, 0);
         }
     }
 

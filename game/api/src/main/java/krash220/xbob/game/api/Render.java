@@ -21,4 +21,6 @@ public class Render {
     public static void distortion(MatrixStack mat, float partialTicks) {throw new UnsupportedOperationException();}
 
     public static float getCenterDepth() {throw new UnsupportedOperationException();}
+
+    public static void camOverhaul(MatrixStack mat) {throw new UnsupportedOperationException();}
 }
