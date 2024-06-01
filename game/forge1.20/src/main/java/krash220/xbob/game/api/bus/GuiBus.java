@@ -27,14 +27,24 @@ public class GuiBus {
         GuiBus.post.add(post);
     }
 
+    public static void doPre(MatrixStack mat, float partialTicks) {
+        for (BiConsumer<MatrixStack, Float> handler : pre) {
+            handler.accept(mat, partialTicks);
+        }
+    }
+
+    public static void doPost(MatrixStack mat, float partialTicks) {
+        for (BiConsumer<MatrixStack, Float> handler : post) {
+            handler.accept(mat, partialTicks);
+        }
+    }
+
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void pre(RenderGuiOverlayEvent.Pre event) {
         if (event.getOverlay() == VanillaGuiOverlay.CROSSHAIR.type() && !event.isCanceled()) {
             MatrixStack mat = new MatrixStack(event.getGuiGraphics().pose());
 
-            for (BiConsumer<MatrixStack, Float> handler : pre) {
-                handler.accept(mat, event.getPartialTick());
-            }
+            doPre(mat, event.getPartialTick());
         }
     }
 
@@ -43,9 +53,7 @@ public class GuiBus {
         if (event.getOverlay() == VanillaGuiOverlay.CROSSHAIR.type()) {
             MatrixStack mat = new MatrixStack(event.getGuiGraphics().pose());
 
-            for (BiConsumer<MatrixStack, Float> handler : post) {
-                handler.accept(mat, event.getPartialTick());
-            }
+            doPost(mat, event.getPartialTick());
         }
     }
 }

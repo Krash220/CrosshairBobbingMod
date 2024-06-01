@@ -1,5 +1,7 @@
 package krash220.xbob.game.api;
 
+import com.tacz.guns.api.item.IGun;
+import krash220.xbob.game.api.mod.TacZ;
 import krash220.xbob.mixin.CameraAccessor;
 import krash220.xbob.mixin.ItemInHandRendererAccessor;
 import krash220.xbob.mixin.LivingEntityAccessor;
@@ -18,7 +20,7 @@ import net.minecraft.world.item.UseAnim;
 public class Player {
 
     private static Pose lastPose;
-    private static float lastHandHeight;
+    private static float lastHandHeight = 1F;
     private static int lastSlot = -1;
 
     public static float spinProgress(float partialTicks) {
@@ -37,6 +39,11 @@ public class Player {
 
         if (camera.getEntity() != null) {
             Entity entity = camera.getEntity();
+
+            if (TacZ.loaded() && mc.player != null && IGun.mainhandHoldGun(mc.player)) {
+                return 0.0f;
+            }
+
             Pose pose = entity.getPose();
 
             if (pose != Pose.STANDING) {
@@ -154,17 +161,19 @@ public class Player {
         LocalPlayer player = mc.player;
 
         if (camera.getEntity() == player && !player.isHandsBusy() && !player.isUsingItem() && !player.swinging) {
-            float height = (accessor.getMainHandHeight() - accessor.getPrevMainHandHeight()) * partialTicks + accessor.getPrevMainHandHeight();
+            if (!(TacZ.loaded() && (IGun.mainhandHoldGun(player) || accessor.getMainHandItem().getItem() instanceof IGun))) {
+                float height = (accessor.getMainHandHeight() - accessor.getPrevMainHandHeight()) * partialTicks + accessor.getPrevMainHandHeight();
 
-            if (player.getMainHandItem().getItem() == accessor.getMainHandItem().getItem() && lastSlot == player.getInventory().selected) {
-                lastHandHeight = Math.max(lastHandHeight, height);
+                if (player.getMainHandItem().getItem() == accessor.getMainHandItem().getItem() && lastSlot == player.getInventory().selected) {
+                    lastHandHeight = Math.max(lastHandHeight, height);
 
-                return lastHandHeight;
-            } else {
-                lastSlot = player.getInventory().selected;
-                lastHandHeight = 0.0f;
+                    return lastHandHeight;
+                } else {
+                    lastSlot = player.getInventory().selected;
+                    lastHandHeight = 0.0f;
 
-                return height;
+                    return height;
+                }
             }
         }
 

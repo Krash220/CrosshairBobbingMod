@@ -45,7 +45,7 @@ public class Render {
 
     private static Boolean coh = null;
 
-    public static void camOverhaul(MatrixStack mat) {
+    public static void modCamera(MatrixStack mat) {
         if (coh == null) {
             try {
                 Class.forName("mirsario.cameraoverhaul.core.callbacks.ModifyCameraTransformCallback");

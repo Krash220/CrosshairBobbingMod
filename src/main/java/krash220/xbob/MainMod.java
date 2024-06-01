@@ -72,7 +72,7 @@ public class MainMod {
             if (Config.check(CONFIG_BOB)) {
                 Render.bobView(this.matrix, partialTicks);
                 Render.distortion(this.matrix, partialTicks);
-                Render.camOverhaul(this.matrix);
+                Render.modCamera(this.matrix);
             }
 
             float item = 1.0f - Player.changeItemProgress(partialTicks);

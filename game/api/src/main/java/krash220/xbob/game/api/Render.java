@@ -22,5 +22,5 @@ public class Render {
 
     public static float getCenterDepth() {throw new UnsupportedOperationException();}
 
-    public static void camOverhaul(MatrixStack mat) {throw new UnsupportedOperationException();}
+    public static void modCamera(MatrixStack mat) {throw new UnsupportedOperationException();}
 }

@@ -51,6 +51,10 @@ dependencies {
         implementation "curse.maven:camera-overhaul-forge-443034:3191725"
     }
 
+    if ("1.20.1".equals(project.mapping_version)) {
+        implementation "maven.modrinth:timeless-and-classics-zero:E6fkRpvN"
+    }
+
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
 
