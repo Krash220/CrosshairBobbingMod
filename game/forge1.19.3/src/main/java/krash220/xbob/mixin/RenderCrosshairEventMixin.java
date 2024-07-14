@@ -2,7 +2,7 @@ package krash220.xbob.mixin;
 
 import com.tacz.guns.api.entity.ReloadState;
 import com.tacz.guns.api.item.IGun;
-import com.tacz.guns.client.animation.internal.GunAnimationStateMachine;
+import com.tacz.guns.client.animation.statemachine.GunAnimationStateMachine;
 import krash220.xbob.game.api.bus.GuiBus;
 import krash220.xbob.game.api.math.MatrixStack;
 import net.minecraft.client.Minecraft;
@@ -62,7 +62,7 @@ public class RenderCrosshairEventMixin {
         return false;
     }
 
-    @Redirect(method = "lambda\u0024onRenderOverlay\u00240", at = @At(value = "INVOKE", target = "Lcom/tacz/guns/client/animation/internal/GunAnimationStateMachine;shouldHideCrossHair()Z"), remap = false)
+    @Redirect(method = "lambda\u0024onRenderOverlay\u00240", at = @At(value = "INVOKE", target = "Lcom/tacz/guns/client/animation/statemachine/GunAnimationStateMachine;shouldHideCrossHair()Z"), remap = false)
     private static boolean shouldHideCrossHair(GunAnimationStateMachine state)
     {
         return false;

@@ -8,3 +8,10 @@ displayName="${MOD_NAME}"
 authors="${MOD_AUTHOR}"
 displayURL="${MOD_URL}"
 description="${MOD_DESCRIPTION}"
+
+[[dependencies.${MOD_ID}]]
+modId="tacz"
+mandatory=false
+versionRange="[1.0.2,)"
+ordering="NONE"
+side="CLIENT"

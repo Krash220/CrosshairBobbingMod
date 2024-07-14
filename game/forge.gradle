@@ -53,9 +53,9 @@ dependencies {
 
     // 代码不规范，维护两行泪
     if ("1.19".equals(project.mapping_version) || "1.19.3".equals(project.mapping_version) || "1.20.1".equals(project.mapping_version)) {
-        implementation "maven.modrinth:timeless-and-classics-zero:n0DiLVwA"
+        implementation "maven.modrinth:timeless-and-classics-zero:gr4tETs1"
     } else if ("1.17.1".equals(project.mapping_version)) {
-        implementation "maven.modrinth:timeless-and-classics-zero:Qw1djg08"
+        implementation "maven.modrinth:timeless-and-classics-zero:la8E97Hu"
     }
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
