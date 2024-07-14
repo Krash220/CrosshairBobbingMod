@@ -4,11 +4,9 @@ import com.tacz.guns.api.entity.ReloadState;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.client.animation.internal.GunAnimationStateMachine;
 import krash220.xbob.game.api.bus.GuiBus;
-import krash220.xbob.game.api.bus.PlayerBus;
 import krash220.xbob.game.api.math.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.core.BlockPos;
 import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import org.spongepowered.asm.mixin.Mixin;
@@ -16,8 +14,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import java.util.function.BiConsumer;
 
 @Mixin(targets = "com.tacz.guns.client.event.RenderCrosshairEvent")
 public class RenderCrosshairEventMixin {
@@ -34,7 +30,7 @@ public class RenderCrosshairEventMixin {
                 return;
             }
 
-            MatrixStack mat = new MatrixStack(event.getGuiGraphics().pose());
+            MatrixStack mat = new MatrixStack(event.getPoseStack());
 
             GuiBus.doPre(mat, event.getPartialTick());
         }
@@ -52,7 +48,7 @@ public class RenderCrosshairEventMixin {
                 return;
             }
 
-            MatrixStack mat = new MatrixStack(event.getGuiGraphics().pose());
+            MatrixStack mat = new MatrixStack(event.getPoseStack());
 
             GuiBus.doPost(mat, event.getPartialTick());
         }

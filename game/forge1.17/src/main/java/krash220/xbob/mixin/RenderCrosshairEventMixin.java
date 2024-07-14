@@ -4,27 +4,23 @@ import com.tacz.guns.api.entity.ReloadState;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.client.animation.internal.GunAnimationStateMachine;
 import krash220.xbob.game.api.bus.GuiBus;
-import krash220.xbob.game.api.bus.PlayerBus;
 import krash220.xbob.game.api.math.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.core.BlockPos;
-import net.minecraftforge.client.event.RenderGuiOverlayEvent;
-import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.gui.ForgeIngameGui;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.function.BiConsumer;
-
 @Mixin(targets = "com.tacz.guns.client.event.RenderCrosshairEvent")
 public class RenderCrosshairEventMixin {
 
     @Inject(method = "onRenderOverlay", at = @At("HEAD"), remap = false)
-    private static void onRenderOverlayBegin(RenderGuiOverlayEvent.Pre event, CallbackInfo ci) {
-        if (event.getOverlay().id().equals(VanillaGuiOverlay.CROSSHAIR.id())) {
+    private static void onRenderOverlayBegin(RenderGameOverlayEvent.PreLayer event, CallbackInfo ci) {
+        if (event.getOverlay() == ForgeIngameGui.CROSSHAIR_ELEMENT) {
             LocalPlayer player = Minecraft.getInstance().player;
             if (player == null) {
                 return;
@@ -34,15 +30,15 @@ public class RenderCrosshairEventMixin {
                 return;
             }
 
-            MatrixStack mat = new MatrixStack(event.getGuiGraphics().pose());
+            MatrixStack mat = new MatrixStack(event.getMatrixStack());
 
-            GuiBus.doPre(mat, event.getPartialTick());
+            GuiBus.doPre(mat, event.getPartialTicks());
         }
     }
 
     @Inject(method = "onRenderOverlay", at = @At("RETURN"), remap = false)
-    private static void onRenderOverlayEnd(RenderGuiOverlayEvent.Pre event, CallbackInfo ci) {
-        if (event.getOverlay().id().equals(VanillaGuiOverlay.CROSSHAIR.id())) {
+    private static void onRenderOverlayEnd(RenderGameOverlayEvent.PreLayer event, CallbackInfo ci) {
+        if (event.getOverlay() == ForgeIngameGui.CROSSHAIR_ELEMENT) {
             LocalPlayer player = Minecraft.getInstance().player;
             if (player == null) {
                 return;
@@ -52,9 +48,9 @@ public class RenderCrosshairEventMixin {
                 return;
             }
 
-            MatrixStack mat = new MatrixStack(event.getGuiGraphics().pose());
+            MatrixStack mat = new MatrixStack(event.getMatrixStack());
 
-            GuiBus.doPost(mat, event.getPartialTick());
+            GuiBus.doPost(mat, event.getPartialTicks());
         }
     }
 

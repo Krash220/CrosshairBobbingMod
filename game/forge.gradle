@@ -51,8 +51,11 @@ dependencies {
         implementation "curse.maven:camera-overhaul-forge-443034:3191725"
     }
 
-    if ("1.20.1".equals(project.mapping_version)) {
-        implementation "maven.modrinth:timeless-and-classics-zero:E6fkRpvN"
+    // 代码不规范，维护两行泪
+    if ("1.19".equals(project.mapping_version) || "1.19.3".equals(project.mapping_version) || "1.20.1".equals(project.mapping_version)) {
+        implementation "maven.modrinth:timeless-and-classics-zero:n0DiLVwA"
+    } else if ("1.17.1".equals(project.mapping_version)) {
+        implementation "maven.modrinth:timeless-and-classics-zero:Qw1djg08"
     }
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'

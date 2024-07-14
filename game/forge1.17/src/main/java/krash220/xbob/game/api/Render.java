@@ -1,6 +1,8 @@
 package krash220.xbob.game.api;
 
+import com.tacz.guns.client.event.CameraSetupEvent;
 import krash220.xbob.game.api.math.MatrixStack;
+import krash220.xbob.game.api.mod.TacZ;
 import krash220.xbob.mixin.GameRendererAccessor;
 import mirsario.cameraoverhaul.core.callbacks.ModifyCameraTransformCallback;
 import mirsario.cameraoverhaul.core.structures.Transform;
@@ -12,6 +14,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.client.event.EntityViewRenderEvent;
 
 public class Render {
 
@@ -46,6 +49,10 @@ public class Render {
     private static Boolean coh = null;
 
     public static void modCamera(MatrixStack mat) {
+        double rotX = 0;
+        double rotY = 0;
+        double rotZ = 0;
+
         if (coh == null) {
             try {
                 Class.forName("mirsario.cameraoverhaul.core.callbacks.ModifyCameraTransformCallback");
@@ -58,10 +65,24 @@ public class Render {
         if (coh) {
             Transform t = ModifyCameraTransformCallback.EVENT.Invoker().ModifyCameraTransform(null, new Transform());
 
-            mat.rotate((float) t.eulerRot.z, 0, 0, 1);
-            mat.rotate((float) t.eulerRot.x, 1, 0, 0);
-            mat.rotate((float) t.eulerRot.y, 0, 1, 0);
+            rotX += t.eulerRot.x;
+            rotY += t.eulerRot.y;
+            rotZ += t.eulerRot.z;
         }
+
+        if (TacZ.loaded()) {
+            Minecraft mc = Minecraft.getInstance();
+            EntityViewRenderEvent.CameraSetup event = new EntityViewRenderEvent.CameraSetup(mc.gameRenderer, mc.gameRenderer.getMainCamera(), mc.getFrameTime(), 0F, 0F, 0F);
+            CameraSetupEvent.applyLevelCameraAnimation(event);
+
+            rotX += event.getPitch();
+            rotY += event.getYaw();
+            rotZ += event.getRoll();
+        }
+
+        mat.rotate((float) rotZ, 0, 0, 1);
+        mat.rotate((float) rotX, 1, 0, 0);
+        mat.rotate((float) rotY, 0, 1, 0);
     }
 
     public static void updateCameraMatrix(MatrixStack mat, float partialTicks) {

@@ -27,6 +27,18 @@ public class GuiBus {
         GuiBus.post.add(post);
     }
 
+    public static void doPre(MatrixStack mat, float partialTicks) {
+        for (BiConsumer<MatrixStack, Float> handler : pre) {
+            handler.accept(mat, partialTicks);
+        }
+    }
+
+    public static void doPost(MatrixStack mat, float partialTicks) {
+        for (BiConsumer<MatrixStack, Float> handler : post) {
+            handler.accept(mat, partialTicks);
+        }
+    }
+
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void pre(RenderGameOverlayEvent.PreLayer event) {
         if (event.getOverlay() == ForgeIngameGui.CROSSHAIR_ELEMENT && !event.isCanceled()) {
