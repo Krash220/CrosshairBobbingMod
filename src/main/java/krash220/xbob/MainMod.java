@@ -106,7 +106,7 @@ public class MainMod {
             float scaleBow = 1.0f;
 
             if (Config.check(CONFIG_SPEAR)) {
-                angle += interpolation(Math::sin, Player.spinProgress(partialTicks), 0, 0.5 * Math.PI, false) * 720f;
+                angle += interpolation(Math::sin, Player.spinProgress(partialTicks), 0, 0.5 * Math.PI, false) * -720f;
             }
 
             if (Config.check(CONFIG_SNEAK)) {

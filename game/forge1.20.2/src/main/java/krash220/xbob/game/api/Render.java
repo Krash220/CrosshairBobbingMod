@@ -30,7 +30,7 @@ public class Render {
     public static boolean isDebugCrosshair() {
         Minecraft mc = Minecraft.getInstance();
 
-        return mc.options.hideGui || mc.options.getCameraType() != CameraType.FIRST_PERSON || mc.gui.getDebugOverlay().showDebugScreen() && !mc.player.isReducedDebugInfo() && !mc.options.reducedDebugInfo().get();
+        return mc.options.hideGui || mc.gui.getDebugOverlay().showDebugScreen() && !mc.player.isReducedDebugInfo() && !mc.options.reducedDebugInfo().get();
     }
 
     public static void bobView(MatrixStack mat, float partialTicks) {
