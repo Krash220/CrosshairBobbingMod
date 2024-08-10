@@ -1,5 +1,7 @@
 package krash220.xbob.game.api;
 
+import com.tacz.guns.api.item.IGun;
+import krash220.xbob.game.api.mod.TacZ;
 import krash220.xbob.mixin.CameraAccessor;
 import krash220.xbob.mixin.HeldItemRendererAccessor;
 import krash220.xbob.mixin.LivingEntityAccessor;
@@ -37,6 +39,11 @@ public class Player {
 
         if (camera.getFocusedEntity() != null) {
             Entity entity = camera.getFocusedEntity();
+
+            if (TacZ.loaded() && mc.player != null && IGun.mainhandHoldGun(mc.player)) {
+                return 0.0f;
+            }
+
             EntityPose pose = entity.getPose();
 
             if (pose != EntityPose.STANDING) {
@@ -154,17 +161,19 @@ public class Player {
         ClientPlayerEntity player = mc.player;
 
         if (camera.getFocusedEntity() == player && !player.isRiding() && !player.isUsingItem() && !player.handSwinging) {
-            float height = (accessor.getEquipProgressMainHand() - accessor.getPrevEquipProgressMainHand()) * partialTicks + accessor.getPrevEquipProgressMainHand();
+            if (!(TacZ.loaded() && (IGun.mainhandHoldGun(player) || accessor.getMainHand().getItem() instanceof IGun))) {
+                float height = (accessor.getEquipProgressMainHand() - accessor.getPrevEquipProgressMainHand()) * partialTicks + accessor.getPrevEquipProgressMainHand();
 
-            if (player.getInventory().getMainHandStack().getItem() == accessor.getMainHand().getItem() && lastSlot == player.getInventory().selectedSlot) {
-                lastHandHeight = Math.max(lastHandHeight, height);
+                if (player.getInventory().getMainHandStack().getItem() == accessor.getMainHand().getItem() && lastSlot == player.getInventory().selectedSlot) {
+                    lastHandHeight = Math.max(lastHandHeight, height);
 
-                return lastHandHeight;
-            } else {
-                lastSlot = player.getInventory().selectedSlot;
-                lastHandHeight = 0.0f;
+                    return lastHandHeight;
+                } else {
+                    lastSlot = player.getInventory().selectedSlot;
+                    lastHandHeight = 0.0f;
 
-                return height;
+                    return height;
+                }
             }
         }
 
