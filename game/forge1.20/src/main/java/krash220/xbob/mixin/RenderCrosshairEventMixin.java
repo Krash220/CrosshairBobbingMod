@@ -60,13 +60,13 @@ public class RenderCrosshairEventMixin {
 
     // 为什么要隐藏准星！！！！！！！！
     // 感觉后续好容易炸= =
-    @Redirect(method = "onRenderOverlay", at = @At(value = "INVOKE", target = "Lcom/tacz/guns/api/entity/ReloadState$StateType;isReloading()Z"), remap = false)
+    @Redirect(method = "onRenderOverlay", at = @At(value = "INVOKE", target = "Lcom/tacz/guns/api/entity/ReloadState\u0024StateType;isReloading()Z"), remap = false)
     private static boolean isReloading(ReloadState.StateType state)
     {
         return false;
     }
 
-    @Redirect(method = "lambda$onRenderOverlay$0", at = @At(value = "INVOKE", target = "Lcom/tacz/guns/api/client/animation/statemachine/AnimationStateContext;shouldHideCrossHair()Z"), remap = false)
+    @Redirect(method = "lambda\u0024onRenderOverlay\u00240", at = @At(value = "INVOKE", target = "Lcom/tacz/guns/api/client/animation/statemachine/AnimationStateContext;shouldHideCrossHair()Z"), remap = false)
     private static boolean shouldHideCrossHair(AnimationStateContext ctx) {
         return false;
     }
