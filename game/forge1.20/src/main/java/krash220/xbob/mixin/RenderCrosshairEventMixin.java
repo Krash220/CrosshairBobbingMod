@@ -1,8 +1,8 @@
 package krash220.xbob.mixin;
 
+import com.tacz.guns.api.client.animation.statemachine.AnimationStateContext;
 import com.tacz.guns.api.entity.ReloadState;
 import com.tacz.guns.api.item.IGun;
-import com.tacz.guns.client.animation.statemachine.GunAnimationStateMachine;
 import krash220.xbob.game.api.bus.GuiBus;
 import krash220.xbob.game.api.bus.PlayerBus;
 import krash220.xbob.game.api.math.MatrixStack;
@@ -60,15 +60,14 @@ public class RenderCrosshairEventMixin {
 
     // 为什么要隐藏准星！！！！！！！！
     // 感觉后续好容易炸= =
-    @Redirect(method = "onRenderOverlay", at = @At(value = "INVOKE", target = "Lcom/tacz/guns/api/entity/ReloadState\u0024StateType;isReloading()Z"), remap = false)
+    @Redirect(method = "onRenderOverlay", at = @At(value = "INVOKE", target = "Lcom/tacz/guns/api/entity/ReloadState$StateType;isReloading()Z"), remap = false)
     private static boolean isReloading(ReloadState.StateType state)
     {
         return false;
     }
 
-    @Redirect(method = "lambda\u0024onRenderOverlay\u00240", at = @At(value = "INVOKE", target = "Lcom/tacz/guns/client/animation/statemachine/GunAnimationStateMachine;shouldHideCrossHair()Z"), remap = false)
-    private static boolean shouldHideCrossHair(GunAnimationStateMachine state)
-    {
+    @Redirect(method = "lambda$onRenderOverlay$0", at = @At(value = "INVOKE", target = "Lcom/tacz/guns/api/client/animation/statemachine/AnimationStateContext;shouldHideCrossHair()Z"), remap = false)
+    private static boolean shouldHideCrossHair(AnimationStateContext ctx) {
         return false;
     }
 }

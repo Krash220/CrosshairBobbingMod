@@ -53,7 +53,7 @@ dependencies {
 
     // 代码不规范，维护两行泪
     if ("1.19".equals(project.mapping_version) || "1.19.3".equals(project.mapping_version) || "1.20.1".equals(project.mapping_version)) {
-        implementation "maven.modrinth:timeless-and-classics-zero:gr4tETs1"
+        implementation "maven.modrinth:timeless-and-classics-zero:VIAwq0sR"
     } else if ("1.17.1".equals(project.mapping_version)) {
         implementation "maven.modrinth:timeless-and-classics-zero:la8E97Hu"
     }
