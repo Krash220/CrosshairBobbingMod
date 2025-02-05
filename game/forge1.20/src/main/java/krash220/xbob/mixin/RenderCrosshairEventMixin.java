@@ -1,8 +1,9 @@
 package krash220.xbob.mixin;
 
+import com.tacz.guns.api.client.animation.statemachine.AnimationStateContext;
 import com.tacz.guns.api.entity.ReloadState;
 import com.tacz.guns.api.item.IGun;
-import com.tacz.guns.client.animation.statemachine.GunAnimationStateMachine;
+import com.tacz.guns.client.event.RenderCrosshairEvent;
 import krash220.xbob.game.api.bus.GuiBus;
 import krash220.xbob.game.api.bus.PlayerBus;
 import krash220.xbob.game.api.math.MatrixStack;
@@ -19,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.function.BiConsumer;
 
-@Mixin(targets = "com.tacz.guns.client.event.RenderCrosshairEvent")
+@Mixin(RenderCrosshairEvent.class)
 public class RenderCrosshairEventMixin {
 
     @Inject(method = "onRenderOverlay", at = @At("HEAD"), remap = false)
@@ -66,9 +67,8 @@ public class RenderCrosshairEventMixin {
         return false;
     }
 
-    @Redirect(method = "lambda\u0024onRenderOverlay\u00240", at = @At(value = "INVOKE", target = "Lcom/tacz/guns/client/animation/statemachine/GunAnimationStateMachine;shouldHideCrossHair()Z"), remap = false)
-    private static boolean shouldHideCrossHair(GunAnimationStateMachine state)
-    {
+    @Redirect(method = "lambda\u0024onRenderOverlay\u00240", at = @At(value = "INVOKE", target = "Lcom/tacz/guns/api/client/animation/statemachine/AnimationStateContext;shouldHideCrossHair()Z"), remap = false)
+    private static boolean shouldHideCrossHair(AnimationStateContext ctx) {
         return false;
     }
 }
